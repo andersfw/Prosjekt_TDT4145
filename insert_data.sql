@@ -29,6 +29,7 @@ INSERT INTO Operator VALUES('VY');
 
 INSERT INTO Banestrekning VALUES(1, 'Nordlandsbanen', 'Diesel', 'Trondheim -> Bodø');
 INSERT INTO Banestrekning VALUES(2, 'Nordlandsbanen - motsatt', 'Diesel', 'Trondheim -> Bodø');
+INSERT INTO Banestrekning VALUES(3, 'Mo-banen', 'Diesel', 'Mo i Rana -> Trondheim');
 
 --Inn i InneholderStrekninger
 
@@ -45,6 +46,12 @@ INSERT INTO InneholderStrekninger VALUES(2,7);
 INSERT INTO InneholderStrekninger VALUES(2,8);
 INSERT INTO InneholderStrekninger VALUES(2,9);
 INSERT INTO InneholderStrekninger VALUES(2,10);
+
+
+--Mo-banen
+INSERT INTO InneholderStrekninger VALUES(3,8);
+INSERT INTO InneholderStrekninger VALUES(3,9);
+INSERT INTO InneholderStrekninger VALUES(3,10);
 
 
 --Inn i Vogn
@@ -112,5 +119,34 @@ INSERT INTO Seng VALUES(6,4,3);
 INSERT INTO Seng VALUES(7,4,4);
 INSERT INTO Seng VALUES(8,4,4);
 
---Mangler Billett, KundeOrdre, KundeRegister, 
---PaDelstrekning, RutePaBane, Togrute, TogTur, VognOppsett
+
+--Inn i Togrute
+
+--Nordlandsbanen dag
+INSERT INTO Togrute VALUES(1, 'SJ', '07:49',1);
+--Nordlandsbanen natt
+INSERT INTO Togrute VALUES(2, 'SJ', '23:05',1);
+--Mo-banen morgen
+INSERT INTO Togrute VALUES(3, 'SJ', '08:11',3);
+
+--Inn i VognOppsett
+
+--Nordlandsbanen dag
+INSERT INTO VognOppsett VALUES(1, 1, 1, 'SJ-sittevogn-1');
+INSERT INTO VognOppsett VALUES(2, 1, 2, 'SJ-sittevogn-1');
+
+--Nordlandsbanen natt
+INSERT INTO VognOppsett VALUES(1, 2, 1, 'SJ-sittevogn-1');
+INSERT INTO VognOppsett VALUES(3, 2, 2, 'SJ-sovevogn-1');
+
+--Mo-banen morgen
+INSERT INTO VognOppsett VALUES(1, 3, 1, 'SJ-sittevogn-1');
+
+
+--Inn i KundeRegister
+INSERT INTO KundeRegister VALUES(1, 'Ola Nordmann', 'ola@nordmann.no', '12345678');
+INSERT INTO KundeRegister VALUES(2, 'Kari Nordmann', 'kari@nordmann.no', '87654321');
+INSERT INTO KundeRegister VALUES(3, 'Per Nordmann', 'per@nordmann.no', '22225555');
+
+
+--Mangler Billett, KundeOrdre, PaDelstrekning, RutePaBane, TogTur
