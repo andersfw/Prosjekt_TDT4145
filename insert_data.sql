@@ -149,4 +149,4 @@ INSERT INTO KundeRegister VALUES(2, 'Kari Nordmann', 'kari@nordmann.no', '876543
 INSERT INTO KundeRegister VALUES(3, 'Per Nordmann', 'per@nordmann.no', '22225555');
 
 
---Mangler Billett, KundeOrdre, PaDelstrekning, RutePaBane, TogTur
+--Mangler Billett, KundeOrdre, PaDelstrekning, OrdrePaRute, TogTur
