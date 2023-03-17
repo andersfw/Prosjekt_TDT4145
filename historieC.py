@@ -21,7 +21,7 @@ while station not in gyldige_stasjoner:
 
 
 
-con = sqlite3.connect('db.db')
+con = sqlite3.connect('tog.db')
 
 cursor = con.cursor()
 
