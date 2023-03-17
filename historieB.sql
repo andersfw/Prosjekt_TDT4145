@@ -90,13 +90,6 @@ INSERT INTO Seng VALUES(8,4,4);
 
 --Inn i Togrute
 
---Nordlandsbanen dag
-INSERT INTO Togrute VALUES(1, 'SJ', '07:49', 'Nordlandsbanen Dag',1);
---Nordlandsbanen natt
-INSERT INTO Togrute VALUES(2, 'SJ', '23:05', 'Nordlandsbanen Natt',1);
---Mo-banen morgen
-INSERT INTO Togrute VALUES(3, 'SJ', '08:11', 'Mobanen Morgen',3);
-
 --Inn i VognOppsett
 
 --Nordlandsbanen dag

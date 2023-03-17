@@ -26,6 +26,5 @@ cursor = con.cursor()
 
 cursor.execute("INSERT INTO KundeRegister VALUES(NULL,?,?,?)",(navn, epost, telefon))
 
-
 con.commit()
 con.close()
