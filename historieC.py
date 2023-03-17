@@ -29,9 +29,9 @@ cursor.execute('''SELECT DISTINCT Togrute.Navn FROM
 Togrute INNER JOIN TogTur ON Togrute.TogruteID = TogTur.TogruteID 
 INNER JOIN PaDelstrekning ON Togrute.TogruteID = PaDelstrekning.TogruteID 
 INNER JOIN Delstrekning ON PaDelstrekning.DelstrekningID = Delstrekning.DelstrekningID
-WHERE Dag = ? AND StartStasjon = ? OR SluttStasjon = ?''', (dag, station, station))
+WHERE Dag = ? AND (StartStasjon = ? OR SluttStasjon = ?)''', (dag, station, station))
 
-rows = cursor.fetchall()
+rows = [row[0] for row in cursor.fetchall()]
 
 for line in rows:
     print(line)
