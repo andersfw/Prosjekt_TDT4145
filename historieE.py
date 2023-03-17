@@ -2,9 +2,11 @@
 
 import sqlite3
 
-con = sqlite3.connect('db.db')
+con = sqlite3.connect('db1.db')
 
 cursor = con.cursor()
 
-cursor.execute("INSERT INTO KundeRegister VALUES (NULL,'Ola Nordmann','hei@heisann.no','12343378')")
+cursor.execute("SELECT * FROM KundeRegister")
+
+print(cursor.fetchall())
 
