@@ -69,6 +69,7 @@ CREATE TABLE Togrute( --Gjort
 	TogruteID INTEGER NOT NULL,
 	OperatorNavn VARCHAR(20) NOT NULL,
 	Avgangstid VARCHAR(5),
+	Navn VARCHAR(40),
 	BanestrekningID INTEGER NOT NULL,
 	CONSTRAINT tr_pk PRIMARY KEY (TogruteID),
 	CONSTRAINT tr_op_fk FOREIGN KEY (OperatorNavn) REFERENCES Operator(OperatorNavn)
