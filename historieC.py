@@ -7,17 +7,17 @@ dag = input('Angi dag: ')
 
 gyldige_dager = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag']
 
-while dag not in gyldige_dager:
+while dag not in gyldige_dager: #Sjekker at dagen er gyldig
     print('Ugyldig dag')
     dag = input('Angi dag: ')
 
-station = input('Angi stasjon: ')
+stasjon = input('Angi stasjon: ')
 
 gyldige_stasjoner = ['Trondheim', 'Steinkjer', 'Mosjøen', 'Mo i Rana', 'Fauske', 'Bodø']
 
-while station not in gyldige_stasjoner:
+while stasjon not in gyldige_stasjoner: #Sjekker at stasjonen er gyldig
     print('Ugyldig stasjon')
-    station = input('Angi stasjon: ')
+    stasjon = input('Angi stasjon: ')
 
 
 
@@ -29,7 +29,7 @@ cursor.execute('''SELECT DISTINCT Togrute.Navn FROM
 Togrute INNER JOIN TogTur ON Togrute.TogruteID = TogTur.TogruteID 
 INNER JOIN PaDelstrekning ON Togrute.TogruteID = PaDelstrekning.TogruteID 
 INNER JOIN Delstrekning ON PaDelstrekning.DelstrekningID = Delstrekning.DelstrekningID
-WHERE Dag = ? AND (StartStasjon = ? OR SluttStasjon = ?)''', (dag, station, station))
+WHERE Dag = ? AND (StartStasjon = ? OR SluttStasjon = ?)''', (dag, stasjon, stasjon))
 
 rows = [row[0] for row in cursor.fetchall()]
 
