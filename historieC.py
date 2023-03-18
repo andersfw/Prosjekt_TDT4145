@@ -35,3 +35,5 @@ rows = [row[0] for row in cursor.fetchall()]
 
 for line in rows:
     print(line)
+
+con.close()
