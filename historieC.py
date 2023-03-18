@@ -21,7 +21,7 @@ while stasjon not in gyldige_stasjoner: #Sjekker at stasjonen er gyldig
 
 
 
-con = sqlite3.connect('tog.db')
+con = sqlite3.connect('tog4.db')
 
 cursor = con.cursor()
 
@@ -32,8 +32,8 @@ INNER JOIN Delstrekning ON PaDelstrekning.DelstrekningID = Delstrekning.Delstrek
 WHERE Dag = ? AND (StartStasjon = ? OR SluttStasjon = ?)''', (dag, stasjon, stasjon))
 
 rows = [row[0] for row in cursor.fetchall()]
-
-for line in rows:
-    print(line)
+print(f'Togrutene som er innom {stasjon} på {dag} er:')
+for i in range(len(rows)):
+    print(f'[{i+1}] {rows[i]}')
 
 con.close()

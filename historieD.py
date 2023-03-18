@@ -20,7 +20,8 @@ def ikke_nabostasjoner(start, slutt, dato, tid, dato_etter):
         WHERE (StartStasjon = ? OR SluttStasjon = ?) AND 
         ((Dato = ? AND PaDelstrekning.Avgangstid >= ?) OR Dato = ?)
 
-        GROUP BY TogruteID,Dato HAVING count(DelstrekningID)/2;''', (start, slutt, dato, tid, dato_etter))
+        GROUP BY TogruteID,Dato HAVING count(DelstrekningID)/2
+        ORDER BY Dato ASC, PaDelstrekning.Avgangstid ASC''', (start, slutt, dato, tid, dato_etter))
 
     return cursor.fetchall()
 
@@ -34,7 +35,8 @@ def nabostasjoner(start, slutt, dato, tid, dato_etter):
 	
 
         WHERE (StartStasjon = ? AND SluttStasjon = ?) AND 
-        ((Dato = ? AND PaDelstrekning.Avgangstid >= ?) OR Dato = ?)''', (start, slutt, dato, tid, dato_etter))
+        ((Dato = ? AND PaDelstrekning.Avgangstid >= ?) OR Dato = ?)
+        ORDER BY Dato ASC, PaDelstrekning.Avgangstid ASC''', (start, slutt, dato, tid, dato_etter))
     
     return cursor.fetchall()
 
