@@ -9,7 +9,7 @@ con = sqlite3.connect('tog3.db')
 
 cursor = con.cursor()
 
-def ikke_nabostasjoner(start, slutt, dato, tid, dato_etter,):
+def ikke_nabostasjoner(start, slutt, dato, tid, dato_etter):
     cursor.execute('''SELECT * FROM 
     
             Delstrekning JOIN PaDelstrekning USING(DelstrekningID) 
@@ -19,7 +19,7 @@ def ikke_nabostasjoner(start, slutt, dato, tid, dato_etter,):
         WHERE (StartStasjon = ? OR SluttStasjon = ?) AND 
         ((Dato = ? AND Togrute.Avgangstid >= ?) OR Dato = ?)
 
-        GROUP BY TogruteID,Dato HAVING count(DelstrekningID)/2;''', (start, slutt, dato, tid, dato_etter,))
+        GROUP BY TogruteID,Dato HAVING count(DelstrekningID)/2;''', (start, slutt, dato, tid, dato_etter))
 
     return cursor.fetchall()
 
@@ -33,7 +33,7 @@ def nabostasjoner(start, slutt, dato, tid, dato_etter):
 	
 
         WHERE (StartStasjon = ? AND SluttStasjon = ?) AND 
-        ((Dato = ? AND Togrute.Avgangstid >= ?) OR Dato = ?)''', (start, slutt, dato, tid, dato_etter,))
+        ((Dato = ? AND Togrute.Avgangstid >= ?) OR Dato = ?)''', (start, slutt, dato, tid, dato_etter))
     
     return cursor.fetchall()
 
@@ -51,6 +51,9 @@ def hentResultater(start, slutt, dato, kl):
         res.extend(ikke_nabostasjoner(start, slutt, dato, kl, dato_etter))
 
     return res
+
+def printResultater(res):
+    print('1')
 
 
 gyldige_stasjoner = ['Trondheim', 'Steinkjer', 'Mosjøen', 'Mo i Rana', 'Fauske', 'Bodø']
