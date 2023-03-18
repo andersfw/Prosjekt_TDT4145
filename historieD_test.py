@@ -10,16 +10,17 @@ con = sqlite3.connect('tog2.db')
 cursor = con.cursor()
 
 
-def ikke_nabostasjoner(start, slutt, dato):
-    cursor.execute('''SELECT * FROM
-
-        Delstrekning JOIN PaDelstrekning USING(DelstrekningID)
-        JOIN Togrute USING(TogruteID)
+def ikke_nabostasjoner(start, slutt, dato, tid, dato_etter):
+    cursor.execute('''SELECT * FROM Delstrekning 
+        JOIN PaDelstrekning USING(DelstrekningID) 
+        JOIN Togrute USING(TogruteID) 
         JOIN TogTur USING(TogruteID)
-    WHERE (StartStasjon = ? OR SluttStasjon = ?) AND Dato = ?
+    
+    WHERE (StartStasjon = ? OR SluttStasjon = ?) AND 
+    ((Dato =  AND Avgangstid >= ?) OR Dato = ?)
 
 
-    GROUP BY TogruteID HAVING count(DelstrekningID)/2;''',(start, slutt, dato))
+    GROUP BY TogruteID,Dato HAVING count(DelstrekningID)/2;;''',(start, slutt, dato, tid, dato_etter))
 
     return cursor.fetchall()
 
