@@ -106,20 +106,20 @@ INSERT INTO VognOppsett VALUES(1, 3, 1, 'SJ-sittevogn-1');
 --Inn i PaDelstrekning
 
 --Nordlandsbanen dag
-INSERT INTO PaDelstrekning VALUES(1, 1, '09:51');
-INSERT INTO PaDelstrekning VALUES(1, 2, '13:20');
-INSERT INTO PaDelstrekning VALUES(1, 3, '14:31');
-INSERT INTO PaDelstrekning VALUES(1, 4, '16:49');
-INSERT INTO PaDelstrekning VALUES(1, 5, '17:34');
+INSERT INTO PaDelstrekning VALUES(1, 1, '07:49', '09:51');
+INSERT INTO PaDelstrekning VALUES(1, 2, '09:51', '13:20');
+INSERT INTO PaDelstrekning VALUES(1, 3, '13:20', '14:31');
+INSERT INTO PaDelstrekning VALUES(1, 4, '14:31', '16:49');
+INSERT INTO PaDelstrekning VALUES(1, 5, '16:49', '17:34');
 
 --Nordlandsbanen natt
-INSERT INTO PaDelstrekning VALUES(2, 1, '00:57');
-INSERT INTO PaDelstrekning VALUES(2, 2, '04:41');
-INSERT INTO PaDelstrekning VALUES(2, 3, '05:55');
-INSERT INTO PaDelstrekning VALUES(2, 4, '08:19');
-INSERT INTO PaDelstrekning VALUES(2, 5, '09:05');
+INSERT INTO PaDelstrekning VALUES(2, 1, '23:05', '00:57');
+INSERT INTO PaDelstrekning VALUES(2, 2, '00:57', '04:41');
+INSERT INTO PaDelstrekning VALUES(2, 3, '04:41', '05:55');
+INSERT INTO PaDelstrekning VALUES(2, 4, '05:55', '08:19');
+INSERT INTO PaDelstrekning VALUES(2, 5, '08:19', '09:05');
 
 --Mo-banen morgen
-INSERT INTO PaDelstrekning VALUES(3, 8, '09:14');
-INSERT INTO PaDelstrekning VALUES(3, 9, '12:31');
-INSERT INTO PaDelstrekning VALUES(3, 10, '14:13');
+INSERT INTO PaDelstrekning VALUES(3, 8, '08:11', '09:14');
+INSERT INTO PaDelstrekning VALUES(3, 9, '09:14', '12:31');
+INSERT INTO PaDelstrekning VALUES(3, 10, '12:31', '14:13');

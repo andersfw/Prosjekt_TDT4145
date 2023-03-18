@@ -165,6 +165,7 @@ CREATE TABLE VognOppsett( --Gjort
 CREATE TABLE PaDelstrekning(
 	TogruteID INTEGER NOT NULL,
 	DelstrekningID INTEGER NOT NULL,
+	Avgangstid VARCHAR(5),
 	Ankomsttid VARCHAR(5),
 	CONSTRAINT pd_pk PRIMARY KEY (TogruteID, DelstrekningID),
 	CONSTRAINT pd_tr_fk FOREIGN KEY (TogruteID) REFERENCES Togrute(TogruteID)
