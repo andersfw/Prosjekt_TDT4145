@@ -3,12 +3,13 @@
 
 import sqlite3
 import re
+from datetime import date
 
 con = sqlite3.connect('tog2.db')
 
 cursor = con.cursor()
 
-def kjop_info(mobilnummer):
+def kjop_info(mobilnummer, dato):
     cursor.execute('''
     SELECT * FROM KundeRegister 
 	JOIN KundeOrdre USING(KundeID) 
@@ -16,7 +17,7 @@ def kjop_info(mobilnummer):
 	JOIN TogTur USING(TogruteID) 
 	JOIN Billett USING(OrdreNR)
 	
-	WHERE Mobilnummer = ?''', (mobilnummer))
+	WHERE Mobilnummer = ? AND TogTur.Dato >= ?''', (mobilnummer, dato))
 
     return cursor.fetchall
 
@@ -28,4 +29,6 @@ while not bool(pattern.match(mobilnummer)): #Sjekker at telefonnummeret er gyldi
     print('Ugyldig telefon')
     mobilnummer = input('Angi telefon: ')
 
-print(kjop_info(mobilnummer))
+dato = date.today()
+
+print(kjop_info(mobilnummer, dato))
