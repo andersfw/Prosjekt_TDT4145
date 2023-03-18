@@ -4,8 +4,9 @@
 
 import sqlite3
 import re
+from datetime import datetime, timedelta
 
-con = sqlite3.connect('tog3.db')
+con = sqlite3.connect('tog4.db')
 
 cursor = con.cursor()
 
@@ -17,7 +18,7 @@ def ikke_nabostasjoner(start, slutt, dato, tid, dato_etter):
             JOIN TogTur USING(TogruteID)
 
         WHERE (StartStasjon = ? OR SluttStasjon = ?) AND 
-        ((Dato = ? AND Togrute.Avgangstid >= ?) OR Dato = ?)
+        ((Dato = ? AND PaDelstrekning.Avgangstid >= ?) OR Dato = ?)
 
         GROUP BY TogruteID,Dato HAVING count(DelstrekningID)/2;''', (start, slutt, dato, tid, dato_etter))
 
@@ -33,18 +34,15 @@ def nabostasjoner(start, slutt, dato, tid, dato_etter):
 	
 
         WHERE (StartStasjon = ? AND SluttStasjon = ?) AND 
-        ((Dato = ? AND Togrute.Avgangstid >= ?) OR Dato = ?)''', (start, slutt, dato, tid, dato_etter))
+        ((Dato = ? AND PaDelstrekning.Avgangstid >= ?) OR Dato = ?)''', (start, slutt, dato, tid, dato_etter))
     
     return cursor.fetchall()
 
 def hentResultater(start, slutt, dato, kl):
     res = []
-    day = str(int(dato[8:]) + 1)
-    if len(day) == 1:
-        day = '0' + day
-    dato_etter = dato.replace(dato[8:], day, 1)
+    dato_etter = datetime.strptime(dato, '%Y-%m-%d').date() + timedelta(days = 1)
+    dato_etter = dato_etter.strftime('%Y-%m-%d')
 
-    print(dato)
     if nabostasjoner(start, slutt, dato, kl, dato_etter):
         res.extend(nabostasjoner(start, slutt, dato, kl, dato_etter))
     if ikke_nabostasjoner(start, slutt, dato, kl, dato_etter):
@@ -53,7 +51,8 @@ def hentResultater(start, slutt, dato, kl):
     return res
 
 def printResultater(res):
-    print('1')
+    for i in range(len(res)):
+        print(f'[{i+1}] {res[i][10]} fra {start} til {slutt} kl. {res[i][6]}, {res[i][13]} {res[i][12]}.')
 
 
 gyldige_stasjoner = ['Trondheim', 'Steinkjer', 'Mosjøen', 'Mo i Rana', 'Fauske', 'Bodø']
@@ -87,7 +86,7 @@ while not bool(pattern2.match(kl)): #Sjekker at klokkeslett er gyldig
     print('Ugyldig tidspunkt')
     kl = input('Angi nytt tidspunkt: ')
 
-print(hentResultater(start, slutt, dato, kl))
+printResultater(hentResultater(start, slutt, dato, kl))
 
 con.close()
 
