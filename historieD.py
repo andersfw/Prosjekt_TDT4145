@@ -5,6 +5,54 @@
 import sqlite3
 import re
 
+con = sqlite3.connect('tog3.db')
+
+cursor = con.cursor()
+
+def ikke_nabostasjoner(start, slutt, dato, tid, dato_etter,):
+    cursor.execute('''SELECT * FROM 
+    
+            Delstrekning JOIN PaDelstrekning USING(DelstrekningID) 
+            JOIN Togrute USING(TogruteID) 
+            JOIN TogTur USING(TogruteID)
+
+        WHERE (StartStasjon = ? OR SluttStasjon = ?) AND 
+        ((Dato = ? AND Togrute.Avgangstid >= ?) OR Dato = ?)
+
+        GROUP BY TogruteID,Dato HAVING count(DelstrekningID)/2;''', (start, slutt, dato, tid, dato_etter,))
+
+    return cursor.fetchall()
+
+def nabostasjoner(start, slutt, dato, tid, dato_etter):
+
+    cursor.execute('''SELECT * FROM
+
+            Delstrekning JOIN PaDelstrekning USING(DelstrekningID)
+            JOIN Togrute USING(TogruteID)
+            JOIN TogTur USING(TogruteID)
+	
+
+        WHERE (StartStasjon = ? AND SluttStasjon = ?) AND 
+        ((Dato = ? AND Togrute.Avgangstid >= ?) OR Dato = ?)''', (start, slutt, dato, tid, dato_etter,))
+    
+    return cursor.fetchall()
+
+def hentResultater(start, slutt, dato, kl):
+    res = []
+    day = str(int(dato[8:]) + 1)
+    if len(day) == 1:
+        day = '0' + day
+    dato_etter = dato.replace(dato[8:], day, 1)
+
+    print(dato)
+    if nabostasjoner(start, slutt, dato, kl, dato_etter):
+        res.extend(nabostasjoner(start, slutt, dato, kl, dato_etter))
+    if ikke_nabostasjoner(start, slutt, dato, kl, dato_etter):
+        res.extend(ikke_nabostasjoner(start, slutt, dato, kl, dato_etter))
+
+    return res
+
+
 gyldige_stasjoner = ['Trondheim', 'Steinkjer', 'Mosjøen', 'Mo i Rana', 'Fauske', 'Bodø']
 
 start = input('Startstasjon: ')
@@ -23,6 +71,7 @@ pattern1 = re.compile(r'\d{4}-\d{2}-\d{2}$')
 
 dato = input('Dato (yyyy-mm-dd): ')
 
+
 while not bool(pattern1.match(dato)): #Sjekker at dato er gyldig
     print('Ugyldig dato')
     dato = input('Angi ny dato: ')
@@ -35,23 +84,7 @@ while not bool(pattern2.match(kl)): #Sjekker at klokkeslett er gyldig
     print('Ugyldig tidspunkt')
     kl = input('Angi nytt tidspunkt: ')
 
-
-con = sqlite3.connect('tog2.db')
-
-cursor = con.cursor()
-
-cursor.execute('''SELECT * FROM
-
-	Delstrekning JOIN PaDelstrekning USING(DelstrekningID)
-	JOIN Togrute USING(TogruteID)
-	JOIN TogTur USING(TogruteID)
-	
-
-WHERE (StartStasjon = ? OR SluttStasjon = ?) AND Dato = ?
-
-
-GROUP BY TogruteID HAVING count(DelstrekningID)/2;''', (start, slutt, dato))
-
-print(cursor.fetchall())
+print(hentResultater(start, slutt, dato, kl))
 
 con.close()
+
