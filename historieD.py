@@ -19,9 +19,9 @@ while (slutt not in gyldige_stasjoner) and (start != slutt): #Sjekker at sluttst
     print('Ugyldig stasjon')
     slutt = input('Angi sluttstasjon: ')
 
-pattern1 = re.compile(r'\d{2}-\d{2}-\d{4}$')
+pattern1 = re.compile(r'\d{4}-\d{2}-\d{2}$')
 
-dato = input('Dato (dd-mm-yyyy): ')
+dato = input('Dato (yyyy-mm-dd): ')
 
 while not bool(pattern1.match(dato)): #Sjekker at dato er gyldig
     print('Ugyldig dato')
