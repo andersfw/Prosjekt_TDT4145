@@ -91,3 +91,7 @@ Tabellen er dermed fortsatt på 4NF, men dersom MVD-en ikke anses som triviell, 
 <br/><br/>
 
 - (VognID, TogruteID) er supernøkkel, dette gir TogVognNR, dermed 4NF, ellers ingen andre funksjonelle avhengighet.
+
+### __OrdrePaRute__(OrdreNR, Dato, TogruteID)
+- 
+<br/><br/>
