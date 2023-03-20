@@ -40,14 +40,14 @@ def nabostasjoner(start, slutt, dato, tid, dato_etter):
     
     return cursor.fetchall()
 
-def hentResultater(start, slutt, dato, kl):
+def hentResultater(start, slutt, dato, kl, nabo):
     res = []
     dato_etter = datetime.strptime(dato, '%Y-%m-%d').date() + timedelta(days = 1)
     dato_etter = dato_etter.strftime('%Y-%m-%d')
 
-    if nabostasjoner(start, slutt, dato, kl, dato_etter):
+    if nabo:
         res.extend(nabostasjoner(start, slutt, dato, kl, dato_etter))
-    if ikke_nabostasjoner(start, slutt, dato, kl, dato_etter):
+    elif not nabo:
         res.extend(ikke_nabostasjoner(start, slutt, dato, kl, dato_etter))
 
     return res
@@ -71,6 +71,14 @@ while (slutt not in gyldige_stasjoner) and (start != slutt): #Sjekker at sluttst
     print('Ugyldig stasjon')
     slutt = input('Angi sluttstasjon: ')
 
+start_index = gyldige_stasjoner.index(start)
+slutt_index = gyldige_stasjoner.index(slutt)
+
+if abs(start_index-slutt_index) == 1:
+    nabo = True
+else:
+    nabo = False
+
 pattern1 = re.compile(r'\d{4}-\d{2}-\d{2}$')
 
 dato = input('Dato (yyyy-mm-dd): ')
@@ -88,7 +96,7 @@ while not bool(pattern2.match(kl)): #Sjekker at klokkeslett er gyldig
     print('Ugyldig tidspunkt')
     kl = input('Angi nytt tidspunkt: ')
 
-printResultater(hentResultater(start, slutt, dato, kl))
+printResultater(hentResultater(start, slutt, dato, kl, nabo))
 
 con.close()
 
