@@ -50,7 +50,7 @@ CREATE TABLE KundeRegister( --Gjort
 	KundeID INTEGER NOT NULL,
 	Navn VARCHAR(40),
 	Epost VARCHAR(40) UNIQUE, --lagt inn UNIQUE her, kanskje bruke det
-	Mobilnummer INTEGER UNIQUE,
+	Mobilnummer VARCHAR(8) UNIQUE,
 	CONSTRAINT kr_pk PRIMARY KEY(KundeID AUTOINCREMENT)
 );
 
