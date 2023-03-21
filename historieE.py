@@ -37,8 +37,8 @@ epost_database = cursor.fetchall()
 for i in range(len(epost_database)):
     epost_database[i] = epost_database[i][0]
 
-while '@' not in epost or check_contains(epost, epost_database): #Sjekker at eposten er gyldig
-    print('Ugyldig epost')
+while '@' not in epost or ('@' in epost and check_contains(epost, epost_database)): #Sjekker at eposten er gyldig
+    print('Ugyldig epost, eller finnes fra før')
     epost = input('Angi epost: ')
 
 
@@ -51,8 +51,8 @@ telefon_database = cursor.fetchall()
 for i in range(len(telefon_database)):
     telefon_database[i] = telefon_database[i][0]
 
-while not bool(pattern.match(telefon)) or check_contains(telefon, telefon_database): #Sjekker at telefonnummeret er gyldig
-    print('Ugyldig telefon')
+while not bool(pattern.match(telefon)) or (bool(pattern.match(telefon)) and check_contains(telefon, telefon_database)): #Sjekker at telefonnummeret er gyldig
+    print('Ugyldig telefon, eller finnes fra før')
     telefon = input('Angi telefon: ')
     
 
