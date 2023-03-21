@@ -4,7 +4,7 @@ import historieE
 import historieG
 import historieH
 
-print('!¤#Velkommen til togdatabasen!¤#')
+print('\n!¤#Velkommen til togdatabasen!¤#')
 
 print('Dine valg i programmet er:')
 
@@ -42,8 +42,8 @@ D - Finn alle avganger for to påfølgende dager mellom 2 stasjoner
 E - Registrer ny kunde
 G - Finn og kjøp billetter
 H - Finn din reisehistorikk
-Q - Avslutte applikasjon\n
+Q - Avslutte applikasjon
 Velg her: ''').lower()
 
 print('\nTakk for at du brukte togdatabasen!\n')
-print('Restart programmet for å bruke det igjen.')
+print('Restart programmet (pil opp) for å bruke det igjen.')
