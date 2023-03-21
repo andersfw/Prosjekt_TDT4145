@@ -20,7 +20,7 @@ def main():
         
         con.commit()
         print('\n!Kunde registrert!')
-        print(f'\nNavn: {navn}, E-post: {epost}, Telefon: {telefon}\n')
+        print(f'\nNavn: {navn}, E-post: {epost}, Telefon: {telefon}')
 
 
     navn = input('Angi navn: ')

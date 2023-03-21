@@ -13,7 +13,7 @@ C - Søk etter ruter langs en bestemt stasjon
 D - Finn alle avganger for to påfølgende dager mellom 2 stasjoner
 E - Registrer ny kunde
 G - Finn og kjøp billetter
-H - Finn din reisehistorikk
+H - Finn din reisehistorikk\n
 Q - Avslutte applikasjon\n''')
 
 gyldige_valg = ['c', 'd', 'e', 'g', 'h','q']
@@ -36,13 +36,13 @@ while valg != 'q':
         historieH.main()
     else:
         break
-    valg = input('''Tjeneste utført! Hva vil du gjøre nå?\n
+    valg = input('''\nTjeneste utført! Hva vil du gjøre nå?\n
 C - Søk etter ruter langs en bestemt stasjon
 D - Finn alle avganger for to påfølgende dager mellom 2 stasjoner
 E - Registrer ny kunde
 G - Finn og kjøp billetter
-H - Finn din reisehistorikk
-Q - Avslutte applikasjon
+H - Finn din reisehistorikk\n
+Q - Avslutte applikasjon\n
 Velg her: ''').lower()
 
 print('\nTakk for at du brukte togdatabasen!\n')
