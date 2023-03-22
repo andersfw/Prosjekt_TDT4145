@@ -34,7 +34,7 @@ def main():
 
     cursor.execute('SELECT Epost from KundeRegister')
     epost_database = cursor.fetchall()
-
+    print(len(epost_database))
     for i in range(len(epost_database)):
         epost_database[i] = epost_database[i][0]
 
