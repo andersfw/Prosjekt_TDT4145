@@ -16,8 +16,7 @@ def main():
                 return True
         return False
 
-    # function which returns all trips from a given customer for the future (date > today)
-
+    
     def kjop_info(mobilnummer):
         cursor.execute('''
         SELECT * FROM KundeRegister
