@@ -19,8 +19,8 @@ def main():
     
     def kjop_info(mobilnummer):
         cursor.execute('''
-        SELECT * FROM KundeRegister
-        JOIN KundeOrdre USING(KundeID)
+        SELECT * FROM KundeOrdre
+        JOIN KundeRegister USING(KundeID)
         JOIN OrdrePaRute USING(OrdreNR)
         JOIN TogTur ON (TogTur.TogruteID = OrdrePaRute.TogruteID AND TogTur.Dato = OrdrePaRute.Dato)
         JOIN Billett USING(OrdreNR)
