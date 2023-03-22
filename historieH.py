@@ -1,12 +1,12 @@
-# For en bruker skal man kunne finne all informasjon om de kjøpene hen har gjort for fremtidige
-# reiser. Denne funksjonaliteten skal programmeres.
-
+import datetime
 import sqlite3
 import re
-from datetime import date
+
+dato = datetime.date.today()
+
 
 def main():
-    con = sqlite3.connect('tog2.db')
+    con = sqlite3.connect('tog8.db')
 
     cursor = con.cursor()
 
@@ -16,18 +16,19 @@ def main():
                 return True
         return False
 
-    def kjop_info(mobilnummer, dato):
+    # function which returns all trips from a given customer for the future (date > today)
+
+    def kjop_info(mobilnummer):
         cursor.execute('''
-        SELECT * FROM KundeRegister 
-        JOIN KundeOrdre USING(KundeID) 
-        JOIN OrdrePaRute USING(OrdreNR) 
-        JOIN TogTur USING(TogruteID) 
+        SELECT * FROM KundeRegister
+        JOIN KundeOrdre USING(KundeID)
+        JOIN OrdrePaRute USING(OrdreNR)
+        JOIN TogTur ON (TogTur.TogruteID = OrdrePaRute.TogruteID AND TogTur.Dato = OrdrePaRute.Dato)
         JOIN Billett USING(OrdreNR)
-        
-        WHERE Mobilnummer = ? AND TogTur.Dato >= ?''', (mobilnummer, dato))
+
+        WHERE Mobilnummer = ? AND TogTur.Dato >= ? ''', (mobilnummer, dato))
 
         return cursor.fetchall()
-
 
     pattern = re.compile(r'^[4-9]\d{7}$')
     mobilnummer = input('Angi telefon (Begynner på 4 eller 9, ellers åtte siffer langt): ')
@@ -38,12 +39,13 @@ def main():
     for i in range(len(telefon_database)):
         telefon_database[i] = telefon_database[i][0]
 
-    while not check_contains(mobilnummer,telefon_database): #Sjekker om telefonnummeret er i databasen, trenger ikke
-                                                            #validering her, da nummeret er validert ved input i E
+    while not check_contains(int(mobilnummer),telefon_database):  # Sjekker om telefonnummeret er i databasen, trenger ikke
+        # validering her, da nummeret er validert ved input i E
         print('Ugyldig; nummeret finnes ikke i databasen:(')
         mobilnummer = input('Angi telefon: ')
 
+    # dato = date.today()
+    print(kjop_info(mobilnummer))
 
-    dato = date.today()
 
-    print(kjop_info(mobilnummer, dato))
+main()
