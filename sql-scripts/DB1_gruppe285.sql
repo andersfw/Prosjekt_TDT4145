@@ -1,11 +1,11 @@
-CREATE TABLE Jernbanestasjon(  --Gjort
+CREATE TABLE Jernbanestasjon(
 	Navn VARCHAR(20),
 	Hoyde VARCHAR(5),
 	
 	CONSTRAINT jbs_pk PRIMARY KEY(Navn)
 );
 
-CREATE TABLE Delstrekning( --Gjort
+CREATE TABLE Delstrekning(
 	DelstrekningID INTEGER NOT NULL,
 	Lengde INTEGER,
 	Antall_spor INTEGER,
@@ -21,7 +21,7 @@ CREATE TABLE Delstrekning( --Gjort
 );
 
 
-CREATE TABLE Banestrekning( --Gjort
+CREATE TABLE Banestrekning(
 	BanestrekningID INTEGER NOT NULL,
 	Navn VARCHAR(40),
 	Fremdriftsenergi VARCHAR(20),
@@ -29,7 +29,7 @@ CREATE TABLE Banestrekning( --Gjort
 	CONSTRAINT bs_pk PRIMARY KEY(BanestrekningID)
 );
 
-CREATE TABLE InneholderStrekninger( --Gjort
+CREATE TABLE InneholderStrekninger(
 	BanestrekningID INTEGER NOT NULL,
 	DelstrekningID INTEGER NOT NULL,
 	CONSTRAINT is_pk PRIMARY KEY (BanestrekningID, DelstrekningID),
@@ -41,20 +41,20 @@ CREATE TABLE InneholderStrekninger( --Gjort
 		ON DELETE CASCADE
 );
 
-CREATE TABLE Operator( --Gjort
+CREATE TABLE Operator(
 	OperatorNavn VARCHAR(15) NOT NULL,
 	CONSTRAINT operator_pk PRIMARY KEY(OperatorNavn)
 );
 
-CREATE TABLE KundeRegister( --Gjort
+CREATE TABLE KundeRegister(
 	KundeID INTEGER NOT NULL,
 	Navn VARCHAR(40),
-	Epost VARCHAR(40) UNIQUE, --lagt inn UNIQUE her, kanskje bruke det
+	Epost VARCHAR(40) UNIQUE,
 	Mobilnummer VARCHAR(8) UNIQUE,
 	CONSTRAINT kr_pk PRIMARY KEY(KundeID AUTOINCREMENT)
 );
 
-CREATE TABLE KundeOrdre( --Gjort
+CREATE TABLE KundeOrdre(
 	OrdreNR INTEGER NOT NULL,
 	Dato VARCHAR(10),
 	Tid VARCHAR(5),
@@ -65,7 +65,7 @@ CREATE TABLE KundeOrdre( --Gjort
 		ON DELETE CASCADE
 );
 
-CREATE TABLE Togrute( --Gjort
+CREATE TABLE Togrute(
 	TogruteID INTEGER NOT NULL,
 	OperatorNavn VARCHAR(20) NOT NULL,
 	Avgangstid VARCHAR(5),
@@ -90,7 +90,7 @@ CREATE TABLE TogTur(
 		ON DELETE CASCADE
 );
 
-CREATE TABLE Vogn( --Gjort
+CREATE TABLE Vogn(
 	VognID INTEGER NOT NULL,
 	OperatorNavn VARCHAR(15) NOT NULL,
 	CONSTRAINT vogn_pk PRIMARY KEY (VognID),
@@ -99,7 +99,7 @@ CREATE TABLE Vogn( --Gjort
 		ON DELETE CASCADE
 );
 
-CREATE TABLE Sete( --Gjort
+CREATE TABLE Sete(
 	SeteNR INTEGER NOT NULL,
 	VognID INTEGER NOT NULL,
 	CONSTRAINT sete_pk PRIMARY KEY (SeteNR, VognID),
@@ -108,7 +108,7 @@ CREATE TABLE Sete( --Gjort
 		ON DELETE CASCADE
 );
 
-CREATE TABLE Seng( --Gjort
+CREATE TABLE Seng(
 	SengNR INTEGER NOT NULL,
 	VognID INTEGER NOT NULL,
 	KupeNR INTEGER NOT NULL,
@@ -147,11 +147,11 @@ CREATE TABLE Billett(
 		ON DELETE CASCADE
 );
 
-CREATE TABLE VognOppsett( --Gjort
+CREATE TABLE VognOppsett(
 	VognID INTEGER NOT NULL,
 	TogruteID INTEGER NOT NULL,
 	TogVognNR INTEGER,
-	TogVognNavn VARCHAR(30), --sånn at man kan spesifisere vogntypen
+	TogVognNavn VARCHAR(30),
 	CONSTRAINT vo_pk PRIMARY KEY (VognID, TogruteID),
 	CONSTRAINT vo_vogn_fk FOREIGN KEY (VognID) REFERENCES Vogn(VognID)
 		ON UPDATE CASCADE

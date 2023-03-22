@@ -7,7 +7,7 @@ import re
 from datetime import datetime, timedelta
 
 def main():
-    con = sqlite3.connect('tog4.db')
+    con = sqlite3.connect('tog8.db')
 
     cursor = con.cursor()
 

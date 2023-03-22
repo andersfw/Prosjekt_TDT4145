@@ -1,8 +1,8 @@
-import historieC
-import historieD
-import historieE
-import historieG
-import historieH
+import brukerhistorier.historieC as historieC
+import brukerhistorier.historieD as historieD
+import brukerhistorier.historieE as historieE
+import brukerhistorier.historieG as historieG
+import brukerhistorier.historieH as historieH
 
 print('\n!¤#Velkommen til togdatabasen!¤#')
 

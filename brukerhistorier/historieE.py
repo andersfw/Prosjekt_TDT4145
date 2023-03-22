@@ -4,7 +4,7 @@ import sqlite3
 import re
 
 def main():
-    con = sqlite3.connect('tog2.db')
+    con = sqlite3.connect('tog8.db')
 
     cursor = con.cursor()
 
