@@ -25,10 +25,10 @@ def main():
                 JOIN TogTur USING(TogruteID)
 
             WHERE (StartStasjon = ? OR SluttStasjon = ?) AND                
-            ((Dato = ? AND PaDelstrekning.Avgangstid >= ?) OR Dato = ?)
+            ((Dato = ? AND Togrute.Avgangstid >= ?) OR Dato = ?)
 
             GROUP BY TogruteID,Dato HAVING count(DelstrekningID) = 2
-            ORDER BY Dato ASC, PaDelstrekning.Avgangstid ASC''', (start, slutt, dato, tid, dato_etter))
+            ORDER BY Dato ASC, Togrute.Avgangstid ASC''', (start, slutt, dato, tid, dato_etter))
 
         return cursor.fetchall()
 
@@ -45,8 +45,8 @@ def main():
         
 
             WHERE (StartStasjon = ? AND SluttStasjon = ?) AND 
-            ((Dato = ? AND PaDelstrekning.Avgangstid >= ?) OR Dato = ?)
-            ORDER BY Dato ASC, PaDelstrekning.Avgangstid ASC''', (start, slutt, dato, tid, dato_etter))
+            ((Dato = ? AND Togrute.Avgangstid >= ?) OR Dato = ?)
+            ORDER BY Dato ASC, Togrute.Avgangstid ASC''', (start, slutt, dato, tid, dato_etter))
         
         return cursor.fetchall()
 
