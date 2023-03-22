@@ -47,3 +47,5 @@ def main():
     print(kjop_info(mobilnummer))
 
     con.close()
+
+main()
