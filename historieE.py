@@ -33,10 +33,7 @@ def main():
     epost = input('Angi epost: ')
 
     cursor.execute('SELECT Epost from KundeRegister')
-    epost_database = cursor.fetchall()
-    print(len(epost_database))
-    for i in range(len(epost_database)):
-        epost_database[i] = epost_database[i][0]
+    epost_database = [row[0] for row in cursor.fetchall()]
 
     while '@' not in epost or ('@' in epost and check_contains(epost, epost_database)): #Sjekker at eposten er gyldig
         print('Ugyldig epost, eller finnes fra før')
@@ -47,10 +44,7 @@ def main():
     telefon = input('Angi telefon (Begynner på 4 eller 9, ellers åtte siffer langt): ')
 
     cursor.execute('SELECT Mobilnummer from KundeRegister')
-    telefon_database = cursor.fetchall()
-
-    for i in range(len(telefon_database)):
-        telefon_database[i] = telefon_database[i][0]
+    telefon_database = [row[0] for row in cursor.fetchall()]
 
     while not bool(pattern.match(telefon)) or (bool(pattern.match(telefon)) and check_contains(telefon, telefon_database)): #Sjekker at telefonnummeret er gyldig
         print('Ugyldig telefon, eller finnes fra før')

@@ -4,7 +4,9 @@
 import sqlite3
 
 def main():
+    con = sqlite3.connect('tog4.db')
     dag = input('Angi dag: ')
+    cursor = con.cursor()
 
     gyldige_dager = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag']
 
@@ -14,17 +16,13 @@ def main():
 
     stasjon = input('Angi stasjon: ')
 
-    gyldige_stasjoner = ['Trondheim', 'Steinkjer', 'Mosjøen', 'Mo i Rana', 'Fauske', 'Bodø']
-
+    cursor.execute('SELECT Navn from Jernbanestasjon')
+    gyldige_stasjoner = [row[0] for row in cursor.fetchall()]
+    
     while stasjon not in gyldige_stasjoner: #Sjekker at stasjonen er gyldig
         print('Ugyldig stasjon')
         stasjon = input('Angi stasjon: ')
 
-
-
-    con = sqlite3.connect('tog4.db')
-
-    cursor = con.cursor()
 
     cursor.execute('''SELECT DISTINCT Togrute.Navn FROM 
     Togrute INNER JOIN TogTur ON Togrute.TogruteID = TogTur.TogruteID 

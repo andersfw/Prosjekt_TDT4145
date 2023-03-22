@@ -47,5 +47,4 @@ def main():
     # dato = date.today()
     print(kjop_info(mobilnummer))
 
-
-main()
+    con.close()

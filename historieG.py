@@ -146,7 +146,8 @@ def main():
 
         return cursor.fetchall()
 
-    gyldige_stasjoner = ['Trondheim', 'Steinkjer', 'Mosjøen', 'Mo i Rana', 'Fauske', 'Bodø']
+    cursor.execute('SELECT Navn from Jernbanestasjon')
+    gyldige_stasjoner = [row[0] for row in cursor.fetchall()]
 
     start = input('Startstasjon: ')
 
@@ -160,10 +161,13 @@ def main():
         print('Ugyldig stasjon')
         slutt = input('Angi sluttstasjon: ')
 
-    start_index = gyldige_stasjoner.index(start)
-    slutt_index = gyldige_stasjoner.index(slutt)
+    cursor.execute('''
+    SELECT * FROM Delstrekning
+    WHERE StartStasjon = ? AND SluttStasjon = ?''',(start, slutt))
 
-    if abs(start_index-slutt_index) == 1:
+    nabo_res = cursor.fetchall()
+
+    if nabo_res != []:
         nabo = True
     else:
         nabo = False
