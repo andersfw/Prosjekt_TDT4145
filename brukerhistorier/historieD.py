@@ -7,7 +7,7 @@ import re
 from datetime import datetime, timedelta
 
 def main():
-    con = sqlite3.connect('tog10.db')
+    con = sqlite3.connect('tog11.db')
 
     cursor = con.cursor()
 
@@ -17,7 +17,7 @@ def main():
     # Den andre delen av WHERE-betingelsen oppfyller oppgaveteksten, altså at vi skal finne alle ruter på dag1 som går etter
     # klokkeslettet vi har oppgitt, og alle ruter på dag2.
     # Vi sorterer deretter på dato og tid, slik at vi får riktig rekkefølge på svarene.
-    def ikke_nabostasjoner(start, slutt, dato, tid, dato_etter):
+    def ikke_nabostasjoner(start, slutt, dato, tid, dato_etter, retning):
         cursor.execute('''SELECT * FROM 
         
                 Delstrekning JOIN PaDelstrekning USING(DelstrekningID) 
@@ -25,17 +25,18 @@ def main():
                 JOIN TogTur USING(TogruteID)
 
             WHERE (StartStasjon = ? OR SluttStasjon = ?) AND                
-            ((Dato = ? AND Togrute.Avgangstid >= ?) OR Dato = ?)
+            ((Dato = ? AND Togrute.Avgangstid >= ?) OR Dato = ?) AND PaDelstrekning.Retning = ?
 
-            GROUP BY TogruteID,Dato HAVING count(DelstrekningID) = 2
-            ORDER BY Dato ASC, Togrute.Avgangstid ASC''', (start, slutt, dato, tid, dato_etter))
+
+            GROUP BY TogruteID,Dato HAVING count(DelstrekningID)/2
+            ORDER BY Dato ASC, Togrute.Avgangstid ASC''', (start, slutt, dato, tid, dato_etter, retning))
 
         return cursor.fetchall()
 
     # For nabostasjoner blir mye likt, men ettersom vi her kun vil ha EN delstrekning trenger vi en 'AND' i WHERE-betingelsen.
     # Vi trenger følgelig ingen sjekk, ettersom vi er sikre på at det er rett resultat dersom startstasjon = start og
     # sluttstasjon = slutt. Dato/tid - sjekk er samme som før og deretter sorteres det utifra oppgaveteksten.
-    def nabostasjoner(start, slutt, dato, tid, dato_etter):
+    def nabostasjoner(start, slutt, dato, tid, dato_etter, retning):
 
         cursor.execute('''SELECT * FROM
 
@@ -45,20 +46,20 @@ def main():
         
 
             WHERE (StartStasjon = ? AND SluttStasjon = ?) AND 
-            ((Dato = ? AND Togrute.Avgangstid >= ?) OR Dato = ?)
-            ORDER BY Dato ASC, Togrute.Avgangstid ASC''', (start, slutt, dato, tid, dato_etter))
+            ((Dato = ? AND Togrute.Avgangstid >= ?) OR Dato = ?) AND PaDelstrekning.Retning = ?
+            ORDER BY Dato ASC, Togrute.Avgangstid ASC''', (start, slutt, dato, tid, dato_etter, retning))
         
         return cursor.fetchall()
 
-    def hentResultater(start, slutt, dato, kl, nabo):
+    def hentResultater(start, slutt, dato, kl, nabo, retning):
         res = []
         dato_etter = datetime.strptime(dato, '%Y-%m-%d').date() + timedelta(days = 1)
         dato_etter = dato_etter.strftime('%Y-%m-%d')
 
         if nabo: # Dersom stasjonene er naboer, vil vi ha resultatet fra metoden nabostasjoner
-            res.extend(nabostasjoner(start, slutt, dato, kl, dato_etter))
+            res.extend(nabostasjoner(start, slutt, dato, kl, dato_etter, retning))
         elif not nabo: # Hvis de ikke er det, vil vi ha resultatet fra metoden ikke_nabostasjoner
-            res.extend(ikke_nabostasjoner(start, slutt, dato, kl, dato_etter))
+            res.extend(ikke_nabostasjoner(start, slutt, dato, kl, dato_etter, retning))
 
         return res
 
@@ -81,6 +82,17 @@ def main():
     while (slutt not in gyldige_stasjoner) and (start != slutt): #Sjekker at sluttstasjonen er gyldig
         print('Ugyldig stasjon')
         slutt = input('Angi sluttstasjon: ')
+
+    stasjonsliste = ['Trondheim', 'Steinkjer', 'Mosjøen', 'Mo i Rana', 'Fauske', 'Bodø']
+    start_index = stasjonsliste.index(start)
+    slutt_index = stasjonsliste.index(slutt)
+    diff = slutt_index - start_index
+
+    if diff == abs(diff):
+        retning = 1
+    else:
+        retning = 0
+
 
     cursor.execute('''
     SELECT * FROM Delstrekning
@@ -110,8 +122,7 @@ def main():
         print('Ugyldig tidspunkt')
         kl = input('Angi nytt tidspunkt: ')
 
-    printResultater(hentResultater(start, slutt, dato, kl, nabo))
+    printResultater(hentResultater(start, slutt, dato, kl, nabo, retning))
+
 
     con.close()
-
-main()
