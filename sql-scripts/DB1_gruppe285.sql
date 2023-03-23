@@ -167,6 +167,7 @@ CREATE TABLE PaDelstrekning(
 	DelstrekningID INTEGER NOT NULL,
 	Avgangstid VARCHAR(5),
 	Ankomsttid VARCHAR(5),
+	Retning INTEGER,	
 	CONSTRAINT pd_pk PRIMARY KEY (TogruteID, DelstrekningID),
 	CONSTRAINT pd_tr_fk FOREIGN KEY (TogruteID) REFERENCES Togrute(TogruteID)
 		ON UPDATE CASCADE

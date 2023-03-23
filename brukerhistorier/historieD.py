@@ -113,3 +113,5 @@ def main():
     printResultater(hentResultater(start, slutt, dato, kl, nabo))
 
     con.close()
+
+main()
