@@ -6,7 +6,7 @@ dato = datetime.date.today()
 
 
 def main():
-    con = sqlite3.connect('tog8.db')
+    con = sqlite3.connect('tog10.db')
 
     cursor = con.cursor()
     # Hjelpemetode for å sjekke om et element er i en liste
