@@ -180,7 +180,8 @@ def main():
 
     def bestillPlasser(ordreNR, antall_sete, antall_seng, togruteID, dato_tur):
         cursor.execute('''SELECT KundeID FROM KundeRegister WHERE Mobilnummer = ?''', (mobil,))
-        kundeID = [row[0] for row in cursor.fetchall()]
+        rows = cursor.fetchall()
+        kundeID = rows[0]
 
         ledig, ledigePlasseringer = hentLedigePlasser(str(togruteID), dato_tur, start, slutt)
         kl_bestilling = datetime.now().strftime('%H:%M')
