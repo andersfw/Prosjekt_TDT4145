@@ -65,7 +65,7 @@ def main():
 
     def printResultater(res): # Formaterer resultatet på en fin, leselig måte
         for i in range(len(res)):
-            print(f'[{i+1}] {res[i][10]} fra {start} til {slutt} kl. {res[i][6]}, {res[i][13]} {res[i][12]}.')
+            print(f'[{i+1}] {res[i][11]} fra {start} til {slutt} kl. {res[i][6]}, {res[i][14]} {res[i][13]}.')
 
 
     cursor.execute('SELECT Navn from Jernbanestasjon') # Henter ut alle jernbanestasjoner fra databasen
