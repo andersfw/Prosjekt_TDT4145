@@ -23,35 +23,38 @@ def main():
         print(f'\nNavn: {navn}, E-post: {epost}, Telefon: {telefon}')
 
 
+    pattern_navn = re.compile(r'^[a-zA-ZæøåÆØÅ]{2,} [a-zA-ZæøåÆØÅ]{2,}$') # regex for validering av navn 
     navn = input('Angi navn: ')
 
-    while len(navn.split(" ")) <= 1: #Sjekker at navnet består av fornavn og etternavn
-        print('Ugyldig navn')
+    while not bool(pattern_navn.match(navn)): #Sjekker at navnet er gyldig
+        print('Ugyldig navn, skriv fullt navn')
         navn = input('Angi navn: ')
 
 
+    pattern_epost = re.compile(r'^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$') # regex for validering av epost
     epost = input('Angi epost: ')
+    
+    cursor.execute('SELECT Epost from KundeRegister') # Henter ut alle eposter fra databasen, for å sjekke om eposten finnes fra før
 
-    cursor.execute('SELECT Epost from KundeRegister')
     epost_database = [row[0] for row in cursor.fetchall()]
 
-    while '@' not in epost or ('@' in epost and check_contains(epost, epost_database)): #Sjekker at eposten er gyldig
-        print('Ugyldig epost, eller finnes fra før')
+    while not bool(pattern_epost.match(epost)) or (bool(pattern_epost.match(epost)) and check_contains(epost, epost_database)): #Sjekker at eposten er gyldig
+        print('Ugyldig epost-format, eller eposten finnes fra før')
         epost = input('Angi epost: ')
 
 
-    pattern = re.compile(r'^[4-9]\d{7}$')
+    pattern_tlf = re.compile(r'^[4-9]\d{7}$') # regex for validering av telefonnummer
     telefon = input('Angi telefon (Begynner på 4 eller 9, ellers åtte siffer langt): ')
 
-    cursor.execute('SELECT Mobilnummer from KundeRegister')
-    telefon_database = [str(row[0]) for row in cursor.fetchall()]
+    cursor.execute('SELECT Mobilnummer from KundeRegister') # Henter ut alle telefonnummer fra databasen, for å sjekke om telefonnummeret finnes fra før
+    telefon_database = [row[0] for row in cursor.fetchall()]
 
-    while not bool(pattern.match(telefon)) or (bool(pattern.match(telefon)) and check_contains(telefon, telefon_database)): #Sjekker at telefonnummeret er gyldig
+    while not bool(pattern_tlf.match(telefon)) or (bool(pattern_tlf.match(telefon)) and check_contains(telefon, telefon_database)): #Sjekker at telefonnummeret er gyldig
         print('Ugyldig telefon, eller finnes fra før')
         telefon = input('Angi telefon: ')
         
-
-    insert_into(navn, epost, telefon)
+    # Kjører, etter alle valideringer, metoden som legger inn kunden i databasen
+    insert_into(navn, epost, telefon) 
 
 
     con.close()
