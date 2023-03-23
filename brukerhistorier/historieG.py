@@ -325,3 +325,4 @@ def main():
     con.close()
 
 # Er alle sovevogner alltid 8 senger/4 kupeer?
+main()

@@ -28,7 +28,25 @@ def main():
 
         WHERE Mobilnummer = ? AND TogTur.Dato >= ? ''', (mobilnummer, dato))
 
-        return cursor.fetchall()
+        print('\nBillettoversikt: ')
+        result =  cursor.fetchall()
+        res = ""
+        for row in result:
+            if row[16] == None:
+                
+                res += f'''
+                Navn: {row[4]}, Mobilnummer: {row[6]}, E-post: {row[5]}, OrdreNR: {row[0]},
+                Har bestilt reise fra {row[13]} til {row[14]} på dato {row[9]}, SeteNR: {row[15]}, VognID: {row[17]}.
+                Reisen ble bestilt {row[1]} klokken {row[2]}.
+                '''
+            if row[15] == None:
+                res += f'''
+                Navn: {row[4]}, Mobilnummer: {row[6]}, E-post: {row[5]}, OrdreNR: {row[0]},
+                Har bestilt reise fra {row[13]} til {row[14]} på dato {row[9]}, SengNR: {row[16]}, VognID: {row[17]}.
+                Reisen ble bestilt {row[1]} klokken {row[2]}.
+                '''
+        return res
+
 
     mobilnummer = input('Angi telefon (Begynner på 4 eller 9, ellers åtte siffer langt): ')
 
@@ -46,3 +64,4 @@ def main():
     print(kjop_info(mobilnummer)) # Skriver ut alle kjøpene til kunden
 
     con.close()
+
