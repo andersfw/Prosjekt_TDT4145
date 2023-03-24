@@ -240,7 +240,7 @@ def main(db):
 
     print('\n')
 
-    pattern3 = re.compile(r'\d{1}$')
+    pattern3 = re.compile(r'\d{1,2}$')
 
     tur = input('Hvilken avgang ønsker du å bestille? ')
     # Sjekker at svaret er gyldig
@@ -300,7 +300,7 @@ def main(db):
                        togruteID, dato_tur, start, slutt)
         printBekreftelse(res, tur, start, slutt)
     else:
-        pattern4 = re.compile(r'\d{1},\d{1}$')
+        pattern4 = re.compile(r'\d{1,2},\d{1,2}$')
         antall = input('Hvor mange seter og senger ønsker du? (seter,senger) ')
         # Sjekker at svaret er gyldig
         while not bool(pattern4.match(antall)) or int(antall[0]) > ledig[0] or int(antall[0]) < 0 or int(antall[2]) > ledig[1] or int(antall[2]) < 0:
