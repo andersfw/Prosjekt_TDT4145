@@ -26,6 +26,8 @@ def main(db):
         JOIN OrdrePaRute USING(OrdreNR)
         JOIN TogTur ON (TogTur.TogruteID = OrdrePaRute.TogruteID AND TogTur.Dato = OrdrePaRute.Dato)
         JOIN Billett USING(OrdreNR)
+        JOIN Togrute USING(TogruteID)
+        JOIN VognOppsett ON (VognOppsett.VognID = Billett.VognID AND VognOppsett.TogruteID = Togrute.TogruteID)
 
         WHERE Mobilnummer = ? AND TogTur.Dato >= ? ''', (mobilnummer, dato))
 
@@ -37,13 +39,13 @@ def main(db):
                 
                 res += f'''
                 Navn: {row[4]}, Mobilnummer: {row[6]}, E-post: {row[5]}, OrdreNR: {row[0]},
-                Har bestilt reise fra {row[13]} til {row[14]} på dato {row[9]}, SeteNR: {row[15]}, VognID: {row[17]}.
+                Har bestilt reise fra {row[13]} til {row[14]} på dato {row[9]}, SeteNR: {row[15]}, VognNR: {row[24]}, Vogntype: {row[25]}.
                 Reisen ble bestilt {row[1]} klokken {row[2]}.
                 '''
             if row[15] == None:
                 res += f'''
                 Navn: {row[4]}, Mobilnummer: {row[6]}, E-post: {row[5]}, OrdreNR: {row[0]},
-                Har bestilt reise fra {row[13]} til {row[14]} på dato {row[9]}, SengNR: {row[16]}, VognID: {row[17]}.
+                Har bestilt reise fra {row[13]} til {row[14]} på dato {row[9]}, SengNR: {row[16]}, VognNR: {row[24]}, Vogntype: {row[25]}.
                 Reisen ble bestilt {row[1]} klokken {row[2]}.
                 '''
         return res
@@ -67,4 +69,5 @@ def main(db):
     time.sleep(2)
 
     con.close()
+
 
