@@ -300,14 +300,16 @@ def main(db):
                        togruteID, dato_tur, start, slutt)
         printBekreftelse(res, tur, start, slutt)
     else:
-        pattern4 = re.compile(r'\d{1,2},\d{1,2}$')
+        pattern4 = re.compile(r'\d{1,2},\d{1}$')
         antall = input('Hvor mange seter og senger ønsker du? (seter,senger) ')
+        plasser = antall.split(',')
         # Sjekker at svaret er gyldig
-        while not bool(pattern4.match(antall)) or int(antall[0]) > ledig[0] or int(antall[0]) < 0 or int(antall[2]) > ledig[1] or int(antall[2]) < 0:
+        while not bool(pattern4.match(antall)) or int(plasser[0]) > ledig[0] or int(plasser[0]) < 0 or int(plasser[1]) > ledig[1] or int(plasser[1]) < 0:
             antall = input(
                 'Svaret må være på formen "antall seter, antall senger": ')
-        bestillPlasser(ordreNR, int(antall[0]), int(
-            antall[2]), togruteID, dato_tur, start, slutt)
+            plasser = antall.split(',')
+        bestillPlasser(ordreNR, int(plasser[0]), int(
+            plasser[1]), togruteID, dato_tur, start, slutt)
         printBekreftelse(res, tur, start, slutt)
 
     con.close()
