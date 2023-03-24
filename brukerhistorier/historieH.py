@@ -22,7 +22,9 @@ def main(db):
     # Kunden blir entydig identifisert gjennom mobilnummeret sitt, som vil oppgis og lagres som en variabel i programmet.
     def kjop_info(mobilnummer):
         cursor.execute('''
-        SELECT * FROM KundeOrdre
+        SELECT KundeRegister.Navn, Mobilnummer, Epost, OrdreNR, Startstasjon, Sluttstasjon,
+        Togtur.Dato, SeteNR, SengNR, TogVognNr, TogVognNavn, KundeOrdre.Dato, Tid 
+        FROM KundeOrdre
         JOIN KundeRegister USING(KundeID)
         JOIN OrdrePaRute USING(OrdreNR)
         JOIN TogTur ON (TogTur.TogruteID = OrdrePaRute.TogruteID AND TogTur.Dato = OrdrePaRute.Dato)
@@ -36,21 +38,22 @@ def main(db):
         result =  cursor.fetchall()
         res = ""
         for row in result:
-            if row[16] == None:
+            if row[8] == None:
                 
                 res += f'''
-                Navn: {row[4]}, Mobilnummer: {row[6]}, E-post: {row[5]}, OrdreNR: {row[0]},
-                Har bestilt reise fra {row[13]} til {row[14]} på dato {row[9]}, SeteNR: {row[15]}, VognNR: {row[24]}, Vogntype: {row[25]}.
-                Reisen ble bestilt {row[1]} klokken {row[2]}.
+                Navn: {row[0]}, Mobilnummer: {row[1]}, E-post: {row[2]}, OrdreNR: {row[3]},
+                Har bestilt reise fra {row[4]} til {row[5]} på dato {row[6]}, SeteNR: {row[7]}, VognNR i oppsett: {row[9]}, Vogntype: {row[10]}.
+                Reisen ble bestilt {row[11]} klokken {row[12]}.
                 '''
-            if row[15] == None:
+            if row[7] == None:
                 res += f'''
-                Navn: {row[4]}, Mobilnummer: {row[6]}, E-post: {row[5]}, OrdreNR: {row[0]},
-                Har bestilt reise fra {row[13]} til {row[14]} på dato {row[9]}, SengNR: {row[16]}, KupéNR: {math.ceil(int(row[16])/2)}, VognNR: {row[24]}, Vogntype: {row[25]}.
-                Reisen ble bestilt {row[1]} klokken {row[2]}.
+                Navn: {row[0]}, Mobilnummer: {row[1]}, E-post: {row[2]}, OrdreNR: {row[3]},
+                Har bestilt reise fra {row[4]} til {row[5]} på dato {row[6]}, SengNR: {row[8]}, KupéNR: {math.ceil(int(row[8])/2)}, VognNR i oppsett: {row[9]}, Vogntype: {row[10]}.
+                Reisen ble bestilt {row[11]} klokken {row[12]}.
                 '''
         return res
 
+        # Ville egentlig her hente ut KupéNR direkte fra databasen, men siden sqlite3 ikke støtter right join, valgte vi math.ceil for å få kupéNR
 
     mobilnummer = input('Angi telefon (Begynner på 4 eller 9, ellers åtte siffer langt): ')
 
