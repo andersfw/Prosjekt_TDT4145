@@ -4,6 +4,8 @@ import brukerhistorier.historieE as historieE
 import brukerhistorier.historieG as historieG
 import brukerhistorier.historieH as historieH
 
+db = 'tog12.db'
+
 print('\n!¤#Velkommen til togdatabasen!¤#')
 
 print('Dine valg i programmet er:')
@@ -18,27 +20,27 @@ Q - Avslutte applikasjon\n'''
 
 print(alternativer)
 
-gyldige_valg = ['c', 'd', 'e', 'g', 'h','q']
+gyldige_valg = ['c', 'd', 'e', 'g', 'h', 'q']
 valg = input('Hva vil du gjøre: (Skriv inn bokstav) ').lower()
 
 while valg != 'q':
     while valg not in gyldige_valg:
         valg = input('Du må skrive inn en av bokstavene over: ').lower()
 
-
     if valg == 'c':
-        historieC.main()
+        historieC.main(db)
     elif valg == 'd':
-        historieD.main()
+        historieD.main(db)
     elif valg == 'e':
-        historieE.main()
+        historieE.main(db)
     elif valg == 'g':
-        historieG.main()
+        historieG.main(db)
     elif valg == 'h':
-        historieH.main()
+        historieH.main(db)
     else:
         break
-    valg = input(f'\nTjeneste utført! Hva vil du gjøre nå?\n' +alternativer + '\nVelg her: ').lower()
+    valg = input(f'\nTjeneste utført! Hva vil du gjøre nå?\n' +
+                 alternativer + '\nVelg her: ').lower()
 
 print('\nTakk for at du brukte togdatabasen!\n')
 print('Restart programmet (pil opp) for å bruke det igjen.')

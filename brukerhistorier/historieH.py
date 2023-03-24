@@ -1,12 +1,13 @@
 import datetime
 import sqlite3
 import re
+import time
 
 dato = datetime.date.today()
 
 
-def main():
-    con = sqlite3.connect('tog10.db')
+def main(db):
+    con = sqlite3.connect(db)
 
     cursor = con.cursor()
     # Hjelpemetode for å sjekke om et element er i en liste
@@ -62,6 +63,8 @@ def main():
         mobilnummer = input('Angi telefon: ')
 
     print(kjop_info(mobilnummer)) # Skriver ut alle kjøpene til kunden
+
+    time.sleep(2)
 
     con.close()
 

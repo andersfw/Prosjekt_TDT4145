@@ -3,8 +3,8 @@
 import sqlite3
 import re
 
-def main():
-    con = sqlite3.connect('tog10.db')
+def main(db):
+    con = sqlite3.connect(db)
 
     cursor = con.cursor()
 
