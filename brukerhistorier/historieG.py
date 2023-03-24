@@ -4,6 +4,7 @@
 
 import sqlite3
 import re
+from brukerhistorier.historieD import *
 from datetime import datetime, timedelta
 import brukerhistorier.historieE as historieE
 import time
@@ -13,35 +14,6 @@ def main(db):
     con = sqlite3.connect(db)
 
     cursor = con.cursor()
-
-    def ikke_nabostasjoner(start, slutt, dato, tid, dato_etter):
-        cursor.execute('''SELECT * FROM 
-        
-                Delstrekning JOIN PaDelstrekning USING(DelstrekningID) 
-                JOIN Togrute USING(TogruteID) 
-                JOIN TogTur USING(TogruteID)
-
-            WHERE (StartStasjon = ? OR SluttStasjon = ?) AND 
-            ((Dato = ? AND PaDelstrekning.Avgangstid >= ?) OR Dato = ?)
-
-            GROUP BY TogruteID,Dato HAVING count(DelstrekningID)/2
-            ORDER BY Dato ASC, Togrute.Avgangstid ASC''', (start, slutt, dato, tid, dato_etter))
-
-        return cursor.fetchall()
-
-    def nabostasjoner(start, slutt, dato, tid, dato_etter):
-
-        cursor.execute('''SELECT * FROM
-
-                Delstrekning JOIN PaDelstrekning USING(DelstrekningID)
-                JOIN Togrute USING(TogruteID)
-                JOIN TogTur USING(TogruteID)
-        
-            WHERE (StartStasjon = ? AND SluttStasjon = ?) AND 
-            ((Dato = ? AND PaDelstrekning.Avgangstid >= ?) OR Dato = ?)
-            ORDER BY Dato ASC, Togrute.Avgangstid ASC''', (start, slutt, dato, tid, dato_etter))
-
-        return cursor.fetchall()
 
     def hentPlasseringer(TogruteID):  # Henter ut sete-/sengeplasser fra togruten
         cursor.execute('''SELECT VognOppsett.TogVognNR, Sete.SeteNR, Seng.SengNR, VognOppsett.VognID
@@ -69,19 +41,19 @@ def main(db):
 
         return cursor.fetchall()
 
-    def hentStasjoner():
+    def hentStasjoner(TogruteID):
         cursor.execute('''SELECT PaDelstrekning.TogruteID, PaDelstrekning.DelstrekningID, Delstrekning.DelstrekningID, 
             Delstrekning.StartStasjon, Delstrekning.SluttStasjon
             FROM PaDelstrekning INNER JOIN Delstrekning USING(DelstrekningID)
-            WHERE PaDelstrekning.TogruteID = '3';''')
+            WHERE PaDelstrekning.TogruteID = ?''', (TogruteID))
 
         stash = cursor.fetchall()
         stasjoner = [row[3] for row in stash]
         stasjoner.append(stash[-1][-1])
         return stasjoner
 
-    def sjekkOmMellomStasjoner(startStasjonNy, sluttStasjonNy, startStasjonGammel, sluttStasjonGammel):
-        alle_stasjoner = hentStasjoner()
+    def sjekkOmMellomStasjoner(startStasjonNy, sluttStasjonNy, startStasjonGammel, sluttStasjonGammel, TogruteID):
+        alle_stasjoner = hentStasjoner(TogruteID)
         stasjoner_ny = []
         start_indeks = alle_stasjoner.index(startStasjonNy)
 
@@ -130,19 +102,6 @@ def main(db):
 
         con.commit()
 
-    def hentResultater(start, slutt, dato, kl, nabo):  # Henter ut de mulige avgangene
-        res = []
-        dato_etter = datetime.strptime(
-            dato, '%Y-%m-%d').date() + timedelta(days=1)
-        dato_etter = dato_etter.strftime('%Y-%m-%d')
-
-        if nabo:
-            res.extend(nabostasjoner(start, slutt, dato, kl, dato_etter))
-        elif not nabo:
-            res.extend(ikke_nabostasjoner(start, slutt, dato, kl, dato_etter))
-
-        return res
-
     # Henter antall ledige sete-/sengeplasser på en togtur
     def hentLedigePlasser(TogruteID, Dato, StartStasjonNy, SluttStasjonNy):
         ledigePlasseringer = hentPlasseringer(TogruteID)
@@ -158,7 +117,7 @@ def main(db):
             if e[1] != None:  # hvis billetten og plasseringen har samme TogVognNR
                 for sete in ledige_seter:
                     # Sjekker om det er overlapp mellom stasjoner på billetten og det som bestilles, hvis ikke beholder den plasseringen
-                    if e[1] == sete[1] and e[0] == sete[0] and sjekkOmMellomStasjoner(StartStasjonNy, SluttStasjonNy, e[4], e[5]):
+                    if e[1] == sete[1] and e[0] == sete[0] and sjekkOmMellomStasjoner(StartStasjonNy, SluttStasjonNy, e[4], e[5], TogruteID):
                         ledige_seter.remove(sete)
             elif e[2] != None:
                 for seng in ledige_senger:
@@ -181,14 +140,15 @@ def main(db):
 
         return ledig, ledigePlasseringer
 
-    def printResultater(res):  # Skriver ut de mulig avgangene i et oversiktlig format
+    # Skriver ut de mulig avgangene i et oversiktlig format
+    def printResultater(res, start, slutt):
         for i in range(len(res)):
             ledig, ledigePlasseringer = hentLedigePlasser(
                 str(res[i][5]), res[i][13], start, slutt)
             print(f'\n[{i+1}] {res[i][11]} fra {start} til {slutt} kl. {res[i][6]}, {res[i][14]} {res[i][13]}.\n\t\tLedige sitteplasser: {ledig[0]}. Ledige sengeplasser: {ledig[1]}')
         print(f'\n[{len(res)+1}] Avbryt')
 
-    def bestillPlasser(ordreNR, antall_sete, antall_seng, togruteID, dato_tur):
+    def bestillPlasser(ordreNR, antall_sete, antall_seng, togruteID, dato_tur, start, slutt):
         cursor.execute(
             '''SELECT KundeID FROM KundeRegister WHERE Mobilnummer = ?''', (mobil,))
         kundeID = [row[0] for row in cursor.fetchall()]
@@ -273,10 +233,10 @@ def main(db):
         print('Ugyldig tidspunkt')
         kl = input('Angi nytt tidspunkt: ')
 
-    res = hentResultater(start, slutt, dato, kl, nabo)
+    res = hentResultater(start, slutt, dato, kl, nabo, cursor)
     print('\nAvganger:')
     time.sleep(1)
-    printResultater(res)
+    printResultater(res, start, slutt)
 
     print('\n')
 
@@ -328,14 +288,16 @@ def main(db):
         while not bool(pattern3.match(sitteplasser)) or int(sitteplasser) > ledig[0] or int(sitteplasser) < 0:
             sitteplasser = input(
                 'Det er ikke nok ledige seter igjen. Velg et nytt antall: ')
-        bestillPlasser(ordreNR, int(sitteplasser), 0, togruteID, dato_tur)
+        bestillPlasser(ordreNR, int(sitteplasser), 0,
+                       togruteID, dato_tur, start, slutt)
         printBekreftelse(res, tur, start, slutt)
     elif ledig[0] == 0:
         sengeplasser = input('Hvor mange sengeplasser ønsker du? ')
         while not bool(pattern3.match(sengeplasser)) or int(sengeplasser) > ledig[1] or int(sengeplasser) < 0:
             sengeplasser = input(
                 'Det er ikke nok ledige seter igjen. Velg et nytt antall: ')
-        bestillPlasser(ordreNR, 0, int(sengeplasser), togruteID, dato_tur)
+        bestillPlasser(ordreNR, 0, int(sengeplasser),
+                       togruteID, dato_tur, start, slutt)
         printBekreftelse(res, tur, start, slutt)
     else:
         pattern4 = re.compile(r'\d{1},\d{1}$')
@@ -345,7 +307,7 @@ def main(db):
             antall = input(
                 'Svaret må være på formen "antall seter, antall senger": ')
         bestillPlasser(ordreNR, int(antall[0]), int(
-            antall[2]), togruteID, dato_tur)
+            antall[2]), togruteID, dato_tur, start, slutt)
         printBekreftelse(res, tur, start, slutt)
 
     con.close()
