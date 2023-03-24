@@ -2,6 +2,7 @@ import datetime
 import sqlite3
 import re
 import time
+import math
 
 dato = datetime.date.today()
 
@@ -45,7 +46,7 @@ def main(db):
             if row[15] == None:
                 res += f'''
                 Navn: {row[4]}, Mobilnummer: {row[6]}, E-post: {row[5]}, OrdreNR: {row[0]},
-                Har bestilt reise fra {row[13]} til {row[14]} på dato {row[9]}, SengNR: {row[16]}, VognNR: {row[24]}, Vogntype: {row[25]}.
+                Har bestilt reise fra {row[13]} til {row[14]} på dato {row[9]}, SengNR: {row[16]}, KupéNR: {math.ceil(int(row[16])/2)}, VognNR: {row[24]}, Vogntype: {row[25]}.
                 Reisen ble bestilt {row[1]} klokken {row[2]}.
                 '''
         return res
