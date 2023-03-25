@@ -170,46 +170,52 @@ def main(db):
 
         return ledig, ledigePlasseringer
 
-    ### Ferdig kommentert hit ###
-
     # Skriver ut de mulig avgangene i et oversiktlig format
     def printResultater(res, start, slutt):
         for i in range(len(res)):
-            ledig, ledigePlasseringer = hentLedigePlasser(
-                str(res[i][5]), res[i][13], start, slutt)
+            ledig = hentLedigePlasser(
+                str(res[i][5]), res[i][13], start, slutt)[0]
             print(f'\n[{i+1}] {res[i][11]} fra {start} til {slutt} kl. {res[i][6]}, {res[i][14]} {res[i][13]}.\n\t\tLedige sitteplasser: {ledig[0]}. Ledige sengeplasser: {ledig[1]}')
         print(f'\n[{len(res)+1}] Avbryt')
 
+    # Setter sammen bestillingen og legger inn kundeordre og riktig antall billetter.
     def bestillPlasser(ordreNR, antall_sete, antall_seng, togruteID, dato_tur, start, slutt):
         cursor.execute(
             '''SELECT KundeID FROM KundeRegister WHERE Mobilnummer = ?''', (mobil,))
         kundeID = [row[0] for row in cursor.fetchall()]
         kundeID = kundeID[0]
 
-        ledig, ledigePlasseringer = hentLedigePlasser(
-            str(togruteID), dato_tur, start, slutt)
+        ledigePlasseringer = hentLedigePlasser(
+            str(togruteID), dato_tur, start, slutt)[1]
         kl_bestilling = datetime.now().strftime('%H:%M')
         dato_bestilling = datetime.now().strftime('%Y-%m-%d')
 
+        # Legger inn en kundeordre for hele bestillingen dersom det bestilles ett eller flere seter/senger.
         if antall_sete > 0 or antall_seng > 0:
             leggInnOrdre(ordreNR, dato_bestilling, kl_bestilling,
                          kundeID, dato_tur, togruteID)
 
+        # Legger inn antall seter i bestillingen.
         for i in range(antall_sete):
             for p in range(len(ledigePlasseringer)):
+                # Finner det første ledige setet og legger det til i bestillingen/billetten.
                 if ledigePlasseringer[p][1] != None:
                     leggInnBestilling(
                         ordreNR, start, slutt, ledigePlasseringer[p][1], None, ledigePlasseringer[p][3])
                     ledigePlasseringer.pop(p)
                     break
+
+        # Legger inn antall senger i bestillingen.
         for i in range(antall_seng):
             for p in range(len(ledigePlasseringer)):
+                # Finner det første ledige sengen og legger det til i bestillingen/billetten.
                 if ledigePlasseringer[p][2] != None:
                     leggInnBestilling(
                         ordreNR, start, slutt, None, ledigePlasseringer[p][2], ledigePlasseringer[p][3])
                     ledigePlasseringer.pop(p)
                     break
 
+    # Skriver ut en bekreftelse på at man har lagt inn en bestilling på gitt togtur.
     def printBekreftelse(res, tur, start, slutt):
         time.sleep(1)
         print('\n')
@@ -220,6 +226,12 @@ def main(db):
 
     ### PROGRAM / INPUT ###
 
+    # Brukes til å validere input fra brukeren.
+    pattern1 = re.compile(r'\d{4}-\d{2}-\d{2}$')
+    pattern2 = re.compile(r'\d{2}:\d{2}$')
+    pattern3 = re.compile(r'\d{1,2}$')
+    pattern4 = re.compile(r'\d{1,2},\d{1}$')
+
     cursor.execute('SELECT Navn FROM Jernbanestasjon;')
     gyldige_stasjoner = [row[0] for row in cursor.fetchall()]
 
@@ -227,7 +239,8 @@ def main(db):
 
     start = input('Startstasjon: ')
 
-    while start not in gyldige_stasjoner:  # Sjekker at startstasjonen er gyldig
+    # Sjekker at startstasjonen er gyldig
+    while start not in gyldige_stasjoner:
         print('Ugyldig stasjon')
         start = input('Angi startstasjon: ')
 
@@ -238,6 +251,7 @@ def main(db):
         print('Ugyldig stasjon')
         slutt = input('Angi sluttstasjon: ')
 
+    # Sjekker om de to stasjonene som er lagt inn er nabostasjoner, for å bruke det senere.
     cursor.execute('''
     SELECT * FROM Delstrekning
     WHERE StartStasjon = ? AND SluttStasjon = ?;''', (start, slutt))
@@ -249,16 +263,12 @@ def main(db):
     else:
         nabo = False
 
-    pattern1 = re.compile(r'\d{4}-\d{2}-\d{2}$')
-
     dato = input('Dato (yyyy-mm-dd): ')
 
     # Sjekker at dato er gyldig
     while not bool(pattern1.match(dato)):
         print('Ugyldig dato')
         dato = input('Angi ny dato: ')
-
-    pattern2 = re.compile(r'\d{2}:\d{2}$')
 
     kl = input('Tidspunkt (hh:mm): ')
 
@@ -267,6 +277,7 @@ def main(db):
         print('Ugyldig tidspunkt')
         kl = input('Angi nytt tidspunkt: ')
 
+    # Henter ut avgangene som matcher input-verdiene fra brukeren.
     res = hentResultater(start, slutt, dato, kl, nabo, cursor)
     print('\nAvganger:')
     time.sleep(1)
@@ -274,24 +285,29 @@ def main(db):
 
     print('\n')
 
-    pattern3 = re.compile(r'\d{1,2}$')
-
     tur = input('Hvilken avgang ønsker du å bestille? ')
     # Sjekker at svaret er gyldig
     while not bool(pattern3.match(tur)) or int(tur) < 1 or len(res)+1 < int(tur):
         tur = input('Svaret må være et av tall-alternativene over: ')
 
+    # Avbryter og går tilbake til hovedmenyen dersom brukeren velger det siste alternativet på tur.
     if int(tur) == len(res)+1:
         return
     tur = int(tur) - 1
 
-    ledig, ledigePlasser = hentLedigePlasser(
-        str(res[tur][5]), res[tur][13], start, slutt)
+    togruteID = res[tur][5]
+    dato_tur = res[tur][13]
+
+    # Henter ut antallet ledige plasser på den avgangen brukeren valgte.
+    ledig = hentLedigePlasser(
+        str(togruteID), dato_tur, start, slutt)[0]
     ordreNR = datetime.now().strftime('%f')
     cursor.execute('''SELECT Mobilnummer FROM KundeRegister;''')
     kunder = [str(row[0]) for row in cursor.fetchall()]
     mobil = ''
 
+    # Sjekker om mobilnummeret brukeren la inn eksisterer i kunderegisteret.
+    # Hvis det ikke gjør det må brukeren registrere seg som en nye kunde.
     while mobil not in kunder:
         print('\nEr du:')
         print('[1] Ny kunde')
@@ -301,6 +317,7 @@ def main(db):
         while not bool(pattern3.match(kunde_type)) or int(kunde_type) < 1 or 2 < int(kunde_type):
             kunde_type = input('Svar: ')
         print('\n')
+        # Går til kunderegistrering dersom kunden velger alt. 1.
         if kunde_type == '1':
             mobil = historieE.main(db)
             break
@@ -311,12 +328,12 @@ def main(db):
                 time.sleep(2)
     print('\n')
 
-    togruteID = res[tur][5]
-    dato_tur = res[tur][13]
-
     # Sjekker om man må velge mellom sete/seng, evt om det er ingen ledige plasser
+
+    # Hvis det ikke er noen ledige sete- eller sengeplasser igjen.
     if ledig[0] == 0 and ledig[1] == 0:
         print('Det er ingen ledige plasser på denne togturen.')
+    # Dersom det ikke eksisterer sengeplasser eller ikke er noen ledige igjen.
     elif ledig[1] == 0:
         sitteplasser = input('Hvor mange sitteplasser ønsker du? ')
         while not bool(pattern3.match(sitteplasser)) or int(sitteplasser) > ledig[0] or int(sitteplasser) < 0:
@@ -325,6 +342,7 @@ def main(db):
         bestillPlasser(ordreNR, int(sitteplasser), 0,
                        togruteID, dato_tur, start, slutt)
         printBekreftelse(res, tur, start, slutt)
+    # Dersom det ikke eksisterer sitteplasser eller ikke er noen ledige igjen.
     elif ledig[0] == 0:
         sengeplasser = input('Hvor mange sengeplasser ønsker du? ')
         while not bool(pattern3.match(sengeplasser)) or int(sengeplasser) > ledig[1] or int(sengeplasser) < 0:
@@ -333,8 +351,8 @@ def main(db):
         bestillPlasser(ordreNR, 0, int(sengeplasser),
                        togruteID, dato_tur, start, slutt)
         printBekreftelse(res, tur, start, slutt)
+    # Dersom det både er ledige sitteplasser og sengeplasser.
     else:
-        pattern4 = re.compile(r'\d{1,2},\d{1}$')
         antall = input('Hvor mange seter og senger ønsker du? (seter,senger) ')
         plasser = antall.split(',')
         # Sjekker at svaret er gyldig
