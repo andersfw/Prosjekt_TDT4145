@@ -1,10 +1,11 @@
 import datetime
 import sqlite3
-import re
 import time
 import math
 
-dato = datetime.date.today()
+dato = datetime.date.today() #Kommenter ut denne linja dersom sensur skjer etter 3.-4. april
+
+# dato = '2023-03-26' #Bruk denne datoen i stedet dersom sensur skjer etter 3.-4. april
 
 
 def main(db):
@@ -45,7 +46,7 @@ def main(db):
                 Har bestilt reise fra {row[4]} til {row[5]} på dato {row[6]}, SeteNR: {row[7]}, VognNR i oppsett: {row[9]}, Vogntype: {row[10]}.
                 Reisen ble bestilt {row[11]} klokken {row[12]}.
                 '''
-            if row[7] == None:
+            elif row[7] == None:
                 res += f'''
                 Navn: {row[0]}, Mobilnummer: {row[1]}, E-post: {row[2]}, OrdreNR: {row[3]},
                 Har bestilt reise fra {row[4]} til {row[5]} på dato {row[6]}, SengNR: {row[8]}, KupéNR: {math.ceil(int(row[8])/2)}, VognNR i oppsett: {row[9]}, Vogntype: {row[10]}.

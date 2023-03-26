@@ -4,9 +4,9 @@ import brukerhistorier.historieE as historieE
 import brukerhistorier.historieG as historieG
 import brukerhistorier.historieH as historieH
 
-db = 'tog12.db'
+db = 'tog.db'
 
-print('\n!¤#Velkommen til togdatabasen!¤#')
+print('\nVelkommen til togdatabasen!')
 
 print('Dine valg i programmet er:')
 

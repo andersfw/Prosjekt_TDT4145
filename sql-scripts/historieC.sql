@@ -1,3 +1,8 @@
+-- For en stasjon som oppgis, skal bruker få ut alle togruter som er innom stasjonen en gitt ukedag.
+-- Denne funksjonaliteten skal programmeres.
+
+-- Må legge inn tilstrekkelig info for å løse oppgaven. 
+
 -- Nordlandsbanen dag
 INSERT INTO TogTur VALUES ('2023-04-03', 1, 'Mandag');
 INSERT INTO TogTur VALUES ('2023-04-04', 1, 'Tirsdag');
