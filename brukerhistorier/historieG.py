@@ -59,22 +59,22 @@ def main(db):
 
     # Sjekker om det er overlapp mellom to strekninger.
     # Dette er for å sjekke hvilke deler av en togrute en billett gjelder på i 'hentLedigePlasser()'
-    def sjekkOmMellomStasjoner(startStasjonNy, sluttStasjonNy, startStasjonGammel, sluttStasjonGammel, TogruteID):
+    def sjekkOmMellomStasjoner(StartStasjon_ny, SluttStasjon_ny, StartStasjon_gammel, SluttStasjon_gammel, TogruteID):
         alle_stasjoner = hentStasjoner(TogruteID)
         stasjoner_ny = []
-        start_indeks = alle_stasjoner.index(startStasjonNy)
+        start_indeks = alle_stasjoner.index(StartStasjon_ny)
 
         # Henter alle stasjonene som er mellom en gitt start- og sluttstasjon
         for i in range(start_indeks, len(alle_stasjoner)):
             stasjoner_ny.append(alle_stasjoner[i])
-            if alle_stasjoner[i] == sluttStasjonNy:
+            if alle_stasjoner[i] == SluttStasjon_ny:
                 break
 
         stasjoner_gammel = []
-        start_indeks = alle_stasjoner.index(startStasjonGammel)
+        start_indeks = alle_stasjoner.index(StartStasjon_gammel)
         for i in range(start_indeks, len(alle_stasjoner)):
             stasjoner_gammel.append(alle_stasjoner[i])
-            if alle_stasjoner[i] == sluttStasjonGammel:
+            if alle_stasjoner[i] == SluttStasjon_gammel:
                 break
 
         return fellesStasjon(stasjoner_ny, stasjoner_gammel)
@@ -94,15 +94,15 @@ def main(db):
 
     # Legger inn en KundeOrdre i databasen, samtidig som den oppdaterer OrdrePaRute,
     # som kun gjøres én gang per runde en kunde bestiller billetter.
-    def leggInnOrdre(OrdreNR, DatoBestilling, KlBestilling, KundeID, DatoTur, TogruteID):
+    def leggInnOrdre(OrdreNR, dato_bestilling, kl_bestilling, KundeID, dato_tur, TogruteID):
 
         cursor.execute('''INSERT INTO KundeOrdre
-        VALUES (?, ?, ?, ?);''', (str(OrdreNR), str(DatoBestilling), str(KlBestilling), str(KundeID)))
+        VALUES (?, ?, ?, ?);''', (str(OrdreNR), str(dato_bestilling), str(kl_bestilling), str(KundeID)))
 
         con.commit()
 
         cursor.execute('''INSERT INTO OrdrePaRute
-        VALUES (?, ?, ?);''', (OrdreNR, DatoTur, str(TogruteID)))
+        VALUES (?, ?, ?);''', (OrdreNR, dato_tur, str(TogruteID)))
 
         con.commit()
 
@@ -118,15 +118,15 @@ def main(db):
     # Henter antall ledige sete- og sengeplasser på en togtur.
     # Dette gjøres ved å hente alle mulige plasser på en togrute vha. hentPlasseringer(),
     # for så å fjerne plasser dersom det eksisterer en billett på samme togtur, vogn og plass.
-    def hentLedigePlasser(TogruteID, Dato, StartStasjonNy, SluttStasjonNy):
-        ledigePlasseringer = hentPlasseringer(TogruteID)
+    def hentLedigePlasser(TogruteID, Dato, StartStasjon_ny, SluttStasjon_ny):
+        ledige_plasseringer = hentPlasseringer(TogruteID)
         billetter = hentBilletter(TogruteID, Dato)
         ledige_senger = []
         ledige_seter = []
 
         # Legger til alle sitteplasser i én liste, og alle sengeplasser i en annen,
         # for å enklere kunne håndtere forskjellene i egenskapene til de to plass-typene.
-        for p in ledigePlasseringer:
+        for p in ledige_plasseringer:
             if p[1] != None:
                 ledige_seter.append(p)
             elif p[2] != None:
@@ -139,7 +139,7 @@ def main(db):
                     # Sjekker først om seteNR på billetten og på plassen er det samme.
                     # Sjekker så at vognNR på billetten og på plassen er det samme.
                     # Sjekker til slutt om det er overlapp mellom stasjoner på billetten og det som bestilles, hvis ikke beholder den plasseringen.
-                    if b[1] == sete[1] and b[0] == sete[0] and sjekkOmMellomStasjoner(StartStasjonNy, SluttStasjonNy, b[4], b[5], TogruteID):
+                    if b[1] == sete[1] and b[0] == sete[0] and sjekkOmMellomStasjoner(StartStasjon_ny, SluttStasjon_ny, b[4], b[5], TogruteID):
                         # Hvis if-setningen er sann, vil setet bli fjernet fra ledige_seter, som da tilsier at det blir fjernet fra ledige_plasseringer.
                         ledige_seter.remove(sete)
             # Hvis billetten er en seng-billett
@@ -156,19 +156,19 @@ def main(db):
                             ledige_senger.pop(next_index)
 
         # Legger sammen ledige seter og senger til en felles oversikt over alle ledige plasser.
-        ledigePlasseringer = []
-        ledigePlasseringer.extend(ledige_seter)
-        ledigePlasseringer.extend(ledige_senger)
+        ledige_plasseringer = []
+        ledige_plasseringer.extend(ledige_seter)
+        ledige_plasseringer.extend(ledige_senger)
 
         # Finner antallet ledige seter og senger.
         ledig = [0, 0]
-        for x in ledigePlasseringer:
+        for x in ledige_plasseringer:
             if x[1] != None:
                 ledig[0] += 1
             elif x[2] != None:
                 ledig[1] += 1
 
-        return ledig, ledigePlasseringer
+        return ledig, ledige_plasseringer
 
     # Skriver ut de mulig avgangene i et oversiktlig format
     def printResultater(res, start, slutt):
@@ -185,7 +185,7 @@ def main(db):
         kundeID = [row[0] for row in cursor.fetchall()]
         kundeID = kundeID[0]
 
-        ledigePlasseringer = hentLedigePlasser(
+        ledige_plasseringer = hentLedigePlasser(
             str(togruteID), dato_tur, start, slutt)[1]
         kl_bestilling = datetime.now().strftime('%H:%M')
         dato_bestilling = datetime.now().strftime('%Y-%m-%d')
@@ -197,22 +197,22 @@ def main(db):
 
         # Legger inn antall seter i bestillingen.
         for i in range(antall_sete):
-            for p in range(len(ledigePlasseringer)):
+            for p in range(len(ledige_plasseringer)):
                 # Finner det første ledige setet og legger det til i bestillingen/billetten.
-                if ledigePlasseringer[p][1] != None:
+                if ledige_plasseringer[p][1] != None:
                     leggInnBestilling(
-                        ordreNR, start, slutt, ledigePlasseringer[p][1], None, ledigePlasseringer[p][3])
-                    ledigePlasseringer.pop(p)
+                        ordreNR, start, slutt, ledige_plasseringer[p][1], None, ledige_plasseringer[p][3])
+                    ledige_plasseringer.pop(p)
                     break
 
         # Legger inn antall senger i bestillingen.
         for i in range(antall_seng):
-            for p in range(len(ledigePlasseringer)):
+            for p in range(len(ledige_plasseringer)):
                 # Finner det første ledige sengen og legger det til i bestillingen/billetten.
-                if ledigePlasseringer[p][2] != None:
+                if ledige_plasseringer[p][2] != None:
                     leggInnBestilling(
-                        ordreNR, start, slutt, None, ledigePlasseringer[p][2], ledigePlasseringer[p][3])
-                    ledigePlasseringer.pop(p)
+                        ordreNR, start, slutt, None, ledige_plasseringer[p][2], ledige_plasseringer[p][3])
+                    ledige_plasseringer.pop(p)
                     break
 
     # Skriver ut en bekreftelse på at man har lagt inn en bestilling på gitt togtur.
